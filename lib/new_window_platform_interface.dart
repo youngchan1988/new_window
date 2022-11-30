@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'new_window_method_channel.dart';
@@ -26,4 +27,14 @@ abstract class NewWindowPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  Future<int> createWindow({Rect? rect, bool closable = true});
+
+  Future showWindow({
+    required int windowId,
+    String? route,
+    Map<String, dynamic>? windowArgs,
+  });
+
+  Future closeWindow(int windowId);
 }

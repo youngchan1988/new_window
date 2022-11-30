@@ -1,7 +1,7 @@
 name: new_window
 description: A new Flutter plugin project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/youngchan1988/new_window
 
 environment:
   sdk: '>=2.18.4 <3.0.0'

@@ -8,25 +8,35 @@
 import FlutterMacOS
 import Foundation
 
-class NewWindowChannel: NSObject, FlutterStreamHandler {
-    public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "new_window", binaryMessenger: registrar.messenger)
-        let instance = NewWindowPlugin()
-        registrar.addMethodCallDelegate(instance, channel: channel)
-    }
+class NewWindowEventChannel: NSObject, FlutterStreamHandler {
+    private var eventSink: FlutterEventSink?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
-        let channel = FlutterMethodChannel(name: "new_window", binaryMessenger: messenger)
-        
+        let channel = FlutterEventChannel(name: "new_window_event", binaryMessenger: messenger)
+        channel.setStreamHandler(self)
+    }
+    
+    deinit {
+        eventSink = nil
+    }
+    
+    func emit(withWindowId id: Int, andState state: NewWindowState) -> Bool {
+        guard let eventSink = eventSink else {
+            return false
+        }
+        eventSink(["id": id, "state": state.toString()])
+        return true
     }
     
     // FlutterStreamHandler
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        <#code#>
+        self.eventSink = events
+        return nil
     }
     
     func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        <#code#>
+        self.eventSink = nil
+        return nil
     }
 }
