@@ -37,4 +37,11 @@ abstract class NewWindowPlatform extends PlatformInterface {
   });
 
   Future closeWindow(int windowId);
+
+  Stream receiver();
+
+  Future sendMessage(
+      {required int fromWindowId,
+      required int toWindwoId,
+      required String message});
 }

@@ -19,9 +19,9 @@ class StartApp extends StatelessWidget {
       home: NewWindowApp(
         runArgs: args,
         home: const MyApp(),
-        builder: (context, windowId, route, arguments) {
+        builder: (context, window, route, arguments) {
           return WindowWidget(
-              windowId: windowId, route: route, arguments: arguments);
+              window: window, route: route, arguments: arguments);
         },
       ),
     );
@@ -36,6 +36,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  NewWindow? _newWindow;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,23 +45,98 @@ class _MyAppState extends State<MyApp> {
         title: const Text('Plugin example app'),
       ),
       body: Center(
-          child: ElevatedButton(
-        onPressed: () {
-          NewWindow.show(route: '/newcore/macos', arguments: {'User': 'Young'});
-        },
-        child: const Text('New Window'),
-      )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                NewWindow.show(
+                  route: '/newcore/macos',
+                  arguments: {'User': 'Young'},
+                  closable: false,
+                ).then((value) {
+                  setState(() {
+                    _newWindow = value;
+                  });
+                });
+              },
+              child: const Text('New Window'),
+            ),
+            if (_newWindow != null) ...[
+              const SizedBox(
+                height: 24,
+              ),
+              Text('A new window 【${_newWindow!.id}】 created!'),
+              const SizedBox(
+                height: 16,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  NewWindow.of(0).sendMessageTo(
+                      toWindowId: _newWindow!.id,
+                      message: 'Hello World To Window 【${_newWindow!.id}】');
+                },
+                child: const Text('Send Hello'),
+              )
+            ]
+          ],
+        ),
+      ),
     );
   }
 }
 
-class WindowWidget extends StatelessWidget {
+class WindowWidget extends StatefulWidget {
   const WindowWidget(
-      {super.key, required this.windowId, required this.route, this.arguments});
+      {super.key, required this.window, required this.route, this.arguments});
 
-  final int windowId;
+  final NewWindow window;
   final String route;
   final Map<String, dynamic>? arguments;
+
+  @override
+  State<WindowWidget> createState() => _WindowWidgetState();
+}
+
+class _WindowWidgetState extends State<WindowWidget> {
+  String? _receiveMessage;
+
+  @override
+  void initState() {
+    widget.window.receiver(onClose: () {
+      debugPrint('NewWindow State: onClose');
+    }, shouldClose: () {
+      if (mounted) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  content: const Text('Confirm to close?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        widget.window.close();
+                      },
+                      child: const Text('Ok'),
+                    ),
+                  ],
+                ));
+      }
+    }, onMessage: (message) {
+      if (mounted) {
+        setState(() {
+          _receiveMessage = message.message;
+        });
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,16 +150,21 @@ class WindowWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Route: $route'),
-            Text('Arguments: ${jsonEncode(arguments)}'),
+            Text('Route: ${widget.route}'),
+            Text('Arguments: ${jsonEncode(widget.arguments)}'),
             const SizedBox(
               height: 24,
             ),
             ElevatedButton(
-                onPressed: () {
-                  NewWindow.close(windowId);
-                },
-                child: const Text('Close')),
+              onPressed: () {
+                widget.window.close();
+              },
+              child: const Text('Close'),
+            ),
+            const SizedBox(
+              height: 24,
+            ),
+            Text(_receiveMessage ?? ''),
           ],
         ),
       ),

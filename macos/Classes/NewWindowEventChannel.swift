@@ -21,16 +21,22 @@ class NewWindowEventChannel: NSObject, FlutterStreamHandler {
         eventSink = nil
     }
     
-    func emit(withWindowId id: Int, andState state: NewWindowState) -> Bool {
+    func emit(withState state: NewWindowState, andData userData: [String: Any]?) -> Bool {
         guard let eventSink = eventSink else {
             return false
         }
-        eventSink(["id": id, "state": state.toString()])
+        var data = ["state": state.toString()] as [String: Any]
+        if userData != nil {
+            data["userData"] = userData
+        }
+        eventSink(data)
         return true
     }
     
     // FlutterStreamHandler
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        print("EventChannel onListen: \(arguments)")
+        
         self.eventSink = events
         return nil
     }

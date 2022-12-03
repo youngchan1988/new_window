@@ -29,6 +29,18 @@ class MockNewWindowPlatform
     // TODO: implement showWindow
     throw UnimplementedError();
   }
+
+  @override
+  Stream receiver() {
+    // TODO: implement receiver
+    throw UnimplementedError();
+  }
+
+  @override
+  Future sendMessage({required int toWindwoId, required String message}) {
+    // TODO: implement sendMessage
+    throw UnimplementedError();
+  }
 }
 
 void main() {

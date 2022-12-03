@@ -45,4 +45,19 @@ class NewWindowWeb extends NewWindowPlatform {
     // TODO: implement showWindow
     throw UnimplementedError();
   }
+
+  @override
+  Stream receiver() {
+    // TODO: implement receiver
+    throw UnimplementedError();
+  }
+
+  @override
+  Future sendMessage(
+      {required int fromWindowId,
+      required int toWindwoId,
+      required String message}) {
+    // TODO: implement sendMessage
+    throw UnimplementedError();
+  }
 }
