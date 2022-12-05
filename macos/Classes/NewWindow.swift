@@ -11,7 +11,7 @@ import Foundation
 class NewWindow: NSObject, NSWindowDelegate {
     private static var globalWindowsId: Int = 0
     
-    private let window: NSWindow = .init(contentRect: NSRect(x: 0, y: 0, width: 1024, height: 768), styleMask: [.miniaturizable, .closable, .resizable, .titled], backing: .buffered, defer: false)
+    private let window: NSWindow = .init(contentRect: NSRect(x: 0, y: 0, width: 1024, height: 768), styleMask: [.miniaturizable, .closable, .resizable], backing: .buffered, defer: false)
       
     private lazy var windowController = NSWindowController(window: window)
     private lazy var id: Int = {
@@ -34,8 +34,13 @@ class NewWindow: NSObject, NSWindowDelegate {
     open weak var delegate: NewWindowDelegate?
     
     // return the window id
-    init(point: NSPoint?, size: NSSize?, closable: Bool?) {
-        windowClosable = closable ?? true
+    init(point: NSPoint?, size: NSSize?, closable: Bool = true, showTitleBar: Bool = true) {
+        windowClosable = closable
+        if showTitleBar {
+            window.styleMask.insert(NSWindow.StyleMask.titled)
+        } else {
+            window.styleMask.insert(NSWindow.StyleMask.fullSizeContentView)
+        }
         initialPoint = point
         initialSize = size
         super.init()
@@ -75,8 +80,7 @@ class NewWindow: NSObject, NSWindowDelegate {
         if initialPoint == nil {
             window.center()
         }
-//        window.makeKeyAndOrderFront(self)
-        
+
         windowController.contentViewController = window.contentViewController
         windowController.shouldCascadeWindows = true
         windowController.showWindow(self)
@@ -84,10 +88,12 @@ class NewWindow: NSObject, NSWindowDelegate {
     
     // close the window
     func close() {
-//        window.orderOut(self)
-//        window.close()
         windowController.close()
         window.close()
+    }
+    
+    func setTitle(title: String) {
+        window.title = title
     }
     
     func sendMessage(fromWindowId: Int, message: String) -> Bool {
@@ -134,5 +140,15 @@ enum NewWindowState {
         case .onMessage:
             return "onMessage"
         }
+    }
+}
+
+extension NSColor {
+    class func fromHex(hex: Int) -> NSColor {
+        let alpha = CGFloat((hex & 0xFF000000) >> 24) / 255.0
+        let red = CGFloat((hex & 0xFF0000) >> 16) / 255.0
+        let green = CGFloat((hex & 0xFF00) >> 8) / 255.0
+        let blue = CGFloat(hex & 0xFF) / 255.0
+        return NSColor(calibratedRed: red, green: green, blue: blue, alpha: alpha)
     }
 }

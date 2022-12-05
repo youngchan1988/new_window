@@ -32,12 +32,6 @@ class NewWindowWeb extends NewWindowPlatform {
   }
 
   @override
-  Future<int> createWindow({Rect? rect, bool closable = true}) {
-    // TODO: implement createWindow
-    throw UnimplementedError();
-  }
-
-  @override
   Future showWindow(
       {required int windowId,
       String? route,
@@ -58,6 +52,19 @@ class NewWindowWeb extends NewWindowPlatform {
       required int toWindwoId,
       required String message}) {
     // TODO: implement sendMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> createWindow(
+      {Rect? rect, bool closable = true, bool showTitleBar = true}) {
+    // TODO: implement createWindow
+    throw UnimplementedError();
+  }
+
+  @override
+  Future setTitle({required int windowId, required String title}) {
+    // TODO: implement setTitle
     throw UnimplementedError();
   }
 }

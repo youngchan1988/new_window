@@ -22,9 +22,11 @@ class MethodChannelNewWindow extends NewWindowPlatform {
   }
 
   @override
-  Future<int> createWindow({Rect? rect, bool closable = true}) async {
+  Future<int> createWindow(
+      {Rect? rect, bool closable = true, bool showTitleBar = true}) async {
     var arguments = <String, dynamic>{
       'closable': closable,
+      'showTitleBar': showTitleBar,
     };
     if (rect != null) {
       arguments['px'] = rect.left;
@@ -76,4 +78,11 @@ class MethodChannelNewWindow extends NewWindowPlatform {
       },
     );
   }
+
+  @override
+  Future setTitle({required int windowId, required String title}) =>
+      methodChannel.invokeMethod('setTitle', {
+        'windowId': windowId,
+        'title': title,
+      });
 }

@@ -49,6 +49,13 @@ public class NewWindowPlugin: NSObject, FlutterPlugin {
                 result(FlutterError(code: error.code, message: error.message, details: nil))
                 return
             }
+
+            guard let showTitleBar = arguments?["showTitleBar"] as? Bool? else {
+                let error = NewWindowError.argumentError(message: "createWindow Arguments: The field 'showTitleBar' must be Bool")
+                result(FlutterError(code: error.code, message: error.message, details: nil))
+                return
+            }
+
             var point: NSPoint?
             if x != nil, y != nil {
                 point = NSPoint(x: x!, y: y!)
@@ -57,7 +64,7 @@ public class NewWindowPlugin: NSObject, FlutterPlugin {
             if width != nil, height != nil {
                 size = NSSize(width: width!, height: height!)
             }
-            let window = windowController.createWindow(withPoint: point, andSize: size, closable: closable)
+            let window = windowController.createWindow(withPoint: point, andSize: size, closable: closable ?? true, showTitleBar: showTitleBar ?? true)
             result(window.windowId)
         case "showWindow":
             guard let arguments = call.arguments as? [String: Any]? else {
@@ -94,6 +101,26 @@ public class NewWindowPlugin: NSObject, FlutterPlugin {
             }
             result(nil)
             windowController.closeWindow(id: windowId)
+
+        case "setTitle":
+            guard let arguments = call.arguments as? [String: Any] else {
+                let error = NewWindowError.argumentError(message: "setTitle Arguments: arguments must be Dictionary!")
+                result(FlutterError(code: error.code, message: error.message, details: nil))
+                return
+            }
+            guard let windowId = arguments["windowId"] as? Int else {
+                let error = NewWindowError.argumentError(message: "setTitle Arguments: The field 'windowId' must be Int!")
+                result(FlutterError(code: error.code, message: error.message, details: nil))
+                return
+            }
+            guard let title = arguments["title"] as? String else {
+                let error = NewWindowError.argumentError(message: "setTitle Arguments: The field 'title' must be String!")
+                result(FlutterError(code: error.code, message: error.message, details: nil))
+                return
+            }
+            windowController.setTitle(id: windowId, title: title)
+            result(nil)
+
         case "sendMessage":
             guard let arguments = call.arguments as? [String: Any] else {
                 let error = NewWindowError.argumentError(message: "sendMessage Arguments: arguments must be Dictionary!")
@@ -115,7 +142,8 @@ public class NewWindowPlugin: NSObject, FlutterPlugin {
                 result(FlutterError(code: error.code, message: error.message, details: nil))
                 return
             }
-            windowController.sendMessage(fromWindowId: fromWindowId, toWindowId: toWindowId, message: message)
+            let res = windowController.sendMessage(fromWindowId: fromWindowId, toWindowId: toWindowId, message: message)
+            result(res)
 
         default:
             result(FlutterMethodNotImplemented)

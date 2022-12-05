@@ -12,13 +12,15 @@ class NewWindow extends Equatable {
   NewWindow._(this.id);
   factory NewWindow.of(int id) => NewWindow._(id);
 
-  static Future<NewWindow> show(
-      {Rect? rect,
-      String route = '/',
-      Map<String, dynamic>? arguments,
-      bool closable = true}) async {
-    final windowId = await NewWindowPlatform.instance
-        .createWindow(rect: rect, closable: closable);
+  static Future<NewWindow> show({
+    Rect? rect,
+    String route = '/',
+    Map<String, dynamic>? arguments,
+    bool closable = true,
+    bool showTitleBar = true,
+  }) async {
+    final windowId = await NewWindowPlatform.instance.createWindow(
+        rect: rect, closable: closable, showTitleBar: showTitleBar);
     await NewWindowPlatform.instance
         .showWindow(windowId: windowId, route: route, windowArgs: arguments);
     return NewWindow._(windowId);
@@ -30,6 +32,9 @@ class NewWindow extends Equatable {
   Future close() {
     return NewWindowPlatform.instance.closeWindow(id);
   }
+
+  Future setTitle(String title) =>
+      NewWindowPlatform.instance.setTitle(windowId: id, title: title);
 
   ///Listen messages from other windows
   void receiver(

@@ -16,12 +16,6 @@ class MockNewWindowPlatform
   Future closeWindow(int windowId) => Future.value();
 
   @override
-  Future<int> createWindow({Rect? rect, bool closable = true}) {
-    // TODO: implement createWindow
-    throw UnimplementedError();
-  }
-
-  @override
   Future showWindow(
       {required int windowId,
       String? route,
@@ -37,8 +31,24 @@ class MockNewWindowPlatform
   }
 
   @override
-  Future sendMessage({required int toWindwoId, required String message}) {
+  Future sendMessage(
+      {required int fromWindowId,
+      required int toWindwoId,
+      required String message}) {
     // TODO: implement sendMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future setTitle({required int windowId, required String title}) {
+    // TODO: implement setTitle
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int> createWindow(
+      {Rect? rect, bool closable = true, bool showTitleBar = true}) {
+    // TODO: implement createWindow
     throw UnimplementedError();
   }
 }

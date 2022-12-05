@@ -11,8 +11,8 @@ import Foundation
 class NewWindowController: NSObject, NewWindowDelegate {
     private static var windows = [Int: NewWindow]()
    
-    func createWindow(withPoint point: NSPoint?, andSize size: NSSize?, closable: Bool?) -> NewWindow {
-        let window = NewWindow(point: point, size: size, closable: closable)
+    func createWindow(withPoint point: NSPoint?, andSize size: NSSize?, closable: Bool = true, showTitleBar: Bool = true) -> NewWindow {
+        let window = NewWindow(point: point, size: size, closable: closable, showTitleBar: showTitleBar)
         window.delegate = self
         NewWindowController.windows[window.windowId] = window
         
@@ -33,9 +33,14 @@ class NewWindowController: NSObject, NewWindowDelegate {
         return NewWindowController.windows[id] != nil
     }
     
-    func sendMessage(fromWindowId: Int, toWindowId: Int, message: String) {
+    func setTitle(id: Int, title: String) {
+        let window = NewWindowController.windows[id]
+        window?.setTitle(title: title)
+    }
+  
+    func sendMessage(fromWindowId: Int, toWindowId: Int, message: String) -> Bool {
         let window = NewWindowController.windows[toWindowId]
-        window?.sendMessage(fromWindowId: fromWindowId, message: message)
+        return window?.sendMessage(fromWindowId: fromWindowId, message: message) ?? false
     }
     
     // NewWindowDelegate

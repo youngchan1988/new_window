@@ -16,6 +16,7 @@ class StartApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      color: Colors.transparent,
       home: NewWindowApp(
         runArgs: args,
         home: const MyApp(),
@@ -41,6 +42,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Plugin example app'),
       ),
@@ -54,7 +56,7 @@ class _MyAppState extends State<MyApp> {
                 NewWindow.show(
                   route: '/newcore/macos',
                   arguments: {'User': 'Young'},
-                  closable: false,
+                  closable: true,
                 ).then((value) {
                   setState(() {
                     _newWindow = value;
@@ -62,6 +64,24 @@ class _MyAppState extends State<MyApp> {
                 });
               },
               child: const Text('New Window'),
+            ),
+            const SizedBox(
+              height: 24,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                NewWindow.show(
+                  route: '/newcore/macos',
+                  arguments: {'User': 'Young'},
+                  closable: false,
+                  showTitleBar: false,
+                ).then((value) {
+                  setState(() {
+                    _newWindow = value;
+                  });
+                });
+              },
+              child: const Text('New Window Without Title Bar'),
             ),
             if (_newWindow != null) ...[
               const SizedBox(
@@ -143,7 +163,6 @@ class _WindowWidgetState extends State<WindowWidget> {
     return Scaffold(
       appBar: AppBar(title: const Text('New Window')),
       body: Container(
-        color: Colors.blueAccent,
         alignment: Alignment.center,
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -160,6 +179,15 @@ class _WindowWidgetState extends State<WindowWidget> {
                 widget.window.close();
               },
               child: const Text('Close'),
+            ),
+            const SizedBox(
+              height: 24,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                widget.window.setTitle('Hello!');
+              },
+              child: const Text('Set Title: Hello!'),
             ),
             const SizedBox(
               height: 24,

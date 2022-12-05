@@ -28,7 +28,10 @@ abstract class NewWindowPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<int> createWindow({Rect? rect, bool closable = true});
+  Future<int> createWindow(
+      {Rect? rect, bool closable = true, bool showTitleBar = true});
+
+  Future setTitle({required int windowId, required String title});
 
   Future showWindow({
     required int windowId,
